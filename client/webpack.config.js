@@ -42,7 +42,7 @@ module.exports = () => {
       }),
       new InjectManifest({
         swSrc: "./src-sw.js",
-        swDest: "sw.js",
+        swDest: "service-worker.js",
       }),
     ],
 
@@ -60,15 +60,21 @@ module.exports = () => {
           use: ["style-loader", "css-loader"],
         },
         {
-          test: /\.js$/,
-          exclude: /(node_modules)/,
-          use: ["babel-loader"],
-          options: {
-            presets: ["@babel/preset-env"],
-            plugins: [
-              "@babel/plugin-transform-runtime",
-              "@babel/plugin-proposal-object-rest-spread",
-            ],
+          test: /\.(png|svg|jpg|jpeg|gif)$/,
+          type: "asset/resource",
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+              plugins: [
+                "@babel/plugin-proposal-object-rest-spread",
+                "@babel/transform-runtime",
+              ],
+            },
           },
         },
       ],
