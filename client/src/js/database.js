@@ -12,23 +12,26 @@ const initdb = async () =>
     },
   });
 
-// TODO: Add logic to a method that accepts some content and adds it to the database
 export const putDb = async (content) => {
   const db = await openDB("jate", 1);
   const tx = db.transaction("jate", "readwrite");
   const store = tx.objectStore("jate");
-  const req = store.put({ content: content });
+  const req = store.put({ content: content, id: 1 });
   const res = await req;
 };
 
-// TODO: Add logic for a method that gets all the content from the database
 export const getDb = async () => {
   const jateDB = await openDB("jate", 1);
   const tx = jateDB.transaction("jate", "readonly");
   const store = tx.objectStore("jate");
-  const req = store.getAll();
-  const res = await req;
-  return res;
+  // Retrieve all the objects in the store
+  const objects = await store.getAll();
+  objects.sort((a, b) => (a.id > b.id ? 1 : -1));
+
+  // Return the value of the latest object, or an empty string if there are no objects
+  const latestObject =
+    objects.length > 0 ? objects[objects.length - 1] : { value: "" };
+  return latestObject.value;
 };
 
 initdb();
